@@ -1968,7 +1968,12 @@ func (s *serviceClient) showLoginURL() context.CancelFunc {
 
 func openURL(url string) error {
 	if browser := os.Getenv("BROWSER"); browser != "" {
-		return exec.Command(browser, url).Start()
+		browser_cmd := strings.Fields(browser)
+		if len(browser_cmd) == 0 {
+			return fmt.Errorf("BROWSER environment variable is empty")
+		}
+		args := append(browser_cmd[1:], url)
+		return exec.Command(browser_cmd[0], args...).Start()
 	}
 
 	var err error
